@@ -1,17 +1,41 @@
-const http = require('http');
+const fs = require('fs');
+const express = require('express');
+
 const host = 'localhost';
 const port = 8001;
+const app = express();
+const dbFile = 'activity.db';
 
-const requestListener = (req, res) => {
+app.use(express.json());
 
-    console.log(req);
-
-    res.writeHead(200);
-    res.end('il mio primo server');
+const newId = () => {
+    if(!fs.existsSync(dbFile)) {
+        fs.openSync(dbFile, 'w');
+    }
+    const file = fs.readFileSync(dbFile);
+    return file.toString().split('\n').length;
 }
 
-const server = http.createServer(requestListener);
+const add = (req, res) => {
 
-server.listen(port, host, () => {
+    const content = req.body;
+    content.id = newId();
+    content.status = 'open';
+    content.createAt = new Date();
+    content.updateAt = content.createAt;
+
+    fs.appendFile(dbFile, JSON.stringify(content) + '\n', (err) => {
+        if(err) {
+            res.status(500).json({message: `error: ${err}`});
+        } else {
+            res.status(201).json(content);
+        }
+    });
+}
+
+app.post('/', add);
+
+app.listen(port, host, () => {
     console.log(`Server avviato ${host}: ${port}.`)
 })
+
