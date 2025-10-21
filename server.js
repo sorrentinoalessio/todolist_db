@@ -57,7 +57,6 @@ const getActivityById = async (id) => {
         return null;
     }
 }
-
 const get = async (req, res) => {
     const activityId = parseInt(req.params.id);
     const activity = await getActivityById(activityId);
@@ -69,8 +68,57 @@ const get = async (req, res) => {
     }
 }
 
+
+const updateActivityById = async (id, params) => {
+    if(!fs.existsSync(dbFile)) {
+        return null;
+    }
+    try {
+        return await new Promise((resolve, reject) => {
+            const readlineInterface = readline.createInterface({
+                input: fs.createReadStream(dbFile),
+                crlfDelay: Infinity
+            });
+            const activities = [];
+            let updatedActivity;
+            readlineInterface.on('line', (line) => {
+                const activity = JSON.parse(line);
+                if(activity.id === id) {
+                    Object.keys(params).forEach((key) => {
+                        activity[key] = params[key];
+                    })
+                    updatedActivity = {...activity};
+                }
+                activities.push(JSON.stringify(activity) + '\n');
+            });
+            readlineInterface.on('close', (close) => {
+                fs.writeFile(dbFile, activities.join(''), (err) => {
+                    if(err) {
+                        reject(null);
+                    }
+                    resolve(updatedActivity);
+                });
+            })
+        })
+    } catch(err) {
+        return null;
+    }
+}
+
+const update = async (req, res) => {
+    const activityId = parseInt(req.params.id);
+    const activity = await updateActivityById(activityId, req.body);
+    if(activity) {
+        res.status(200).json(activity);
+    } 
+    else {
+        res.status(404).json({message: `error: activity ${activityId} not found`});
+    }
+}
+
 app.post('/', add);
 app.get('/:id', get);
+app.patch('/:id', update);
 
 app.listen(port, host, () => {
     console.log(`Server avviato ${host}: ${port}.`)
