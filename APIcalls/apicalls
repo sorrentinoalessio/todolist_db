@@ -1,2 +1,2 @@
-
 curl -X POST -H 'Content-Type: application/json' -d '{"name": "activity1", "description": "description1"}' http://localhost:8001
+curl -X GET -H 'Content-Type: application/json' http://localhost:8001/1

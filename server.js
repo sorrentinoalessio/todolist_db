@@ -1,5 +1,6 @@
 const fs = require('fs');
 const express = require('express');
+const readline = require('node:readline');
 
 const host = 'localhost';
 const port = 8001;
@@ -17,7 +18,6 @@ const newId = () => {
 }
 
 const add = (req, res) => {
-
     const content = req.body;
     content.id = newId();
     content.status = 'open';
@@ -33,7 +33,44 @@ const add = (req, res) => {
     });
 }
 
+const getActivityById = async (id) => {
+    if(!fs.existsSync(dbFile)) {
+        return null;
+    }
+    try {
+        return await new Promise((resolve, reject) => {
+            const readlineInterface = readline.createInterface({
+                input: fs.createReadStream(dbFile),
+                crlfDelay: Infinity
+            });
+            readlineInterface.on('line', (line) => {
+                const activity = JSON.parse(line);
+                if(activity.id === id) {
+                    resolve (activity);
+                }
+            });
+            readlineInterface.on('close', (close) => {
+                reject(null);
+            })
+        })
+    } catch(err) {
+        return null;
+    }
+}
+
+const get = async (req, res) => {
+    const activityId = parseInt(req.params.id);
+    const activity = await getActivityById(activityId);
+    if(activity) {
+        res.status(200).json(activity);
+    } 
+    else {
+        res.status(404).json({message: `error: activity ${activityId} not found`});
+    }
+}
+
 app.post('/', add);
+app.get('/:id', get);
 
 app.listen(port, host, () => {
     console.log(`Server avviato ${host}: ${port}.`)
