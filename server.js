@@ -104,7 +104,6 @@ const updateActivityById = async (id, params) => {
         return null;
     }
 }
-
 const update = async (req, res) => {
     const activityId = parseInt(req.params.id);
     const activity = await updateActivityById(activityId, req.body);
@@ -116,9 +115,43 @@ const update = async (req, res) => {
     }
 }
 
+const removeActivityById = async(id) => {
+    return await new Promise((resolve, reject) => {
+        const readlineInterface = readline.createInterface({
+            input: fs.createReadStream(dbFile),
+            crlfDelay: Infinity
+        });
+        const activities = [];
+        readlineInterface.on('line', (line) => {
+            const activity = JSON.parse(line);
+            if(activity.id != id) {
+                activities.push(JSON.stringify(activity) + '\n');
+            }
+        });
+        readlineInterface.on('close', () => {
+            fs.writeFile(dbFile, activities.join(''), (err) => {
+                if (err) {
+                    reject(null);
+                }
+            resolve({id})
+            });
+        })
+    })
+}
+const remove = async(req, res) => {
+    const activityId = parseInt(req.params.id); 
+    try {
+        const activity = await removeActivityById(activityId);
+        res.status(200).json(activity);
+    } catch(err) {
+        res.status(500).json({message: `server error`});
+    }
+}
+
 app.post('/', add);
 app.get('/:id', get);
 app.patch('/:id', update);
+app.delete('/:id', remove);
 
 app.listen(port, host, () => {
     console.log(`Server avviato ${host}: ${port}.`)
