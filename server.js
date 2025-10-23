@@ -2,6 +2,9 @@ const fs = require('fs');
 const express = require('express');
 const readline = require('node:readline');
 
+//Importo i middleware di validazione del body/id dal file routeValidator.js | Uso destructuring per importare direttamente le due proprietà in modo compatto
+const { activityBodyValidator, activityParamsValidator } = require('./routeValidator.js');
+
 const host = 'localhost';
 const port = 8001;
 const app = express();
@@ -148,10 +151,27 @@ const remove = async(req, res) => {
     }
 }
 
-app.post('/', add);
-app.get('/:id', get);
-app.patch('/:id', update);
-app.delete('/:id', remove);
+app.post('/', activityBodyValidator, add);
+app.get('/:id', activityParamsValidator, get);
+app.patch('/:id', activityBodyValidator, activityParamsValidator, update);
+app.delete('/:id', activityParamsValidator, remove);
+app.use((err, req, res, next) => {
+    if (err?.error && err.error.isJoi) {
+        if (err.error.details.some(d => d.path.includes('body'))) {
+            return res.status(400).json({
+                type: err.type,
+                message: "Invalid body: " + err.error.toString()
+            });
+        }
+        if (err.error.details.some(d => d.path.includes('params'))) {
+            return res.status(400).json({
+                type: err.type,
+                message: "Invalid params: " + err.error.toString()
+            });
+        }
+    }
+    next(err);
+});
 
 app.listen(port, host, () => {
     console.log(`Server avviato ${host}: ${port}.`)
