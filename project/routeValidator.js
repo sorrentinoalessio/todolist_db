@@ -9,14 +9,14 @@ const bodyValidator = Joi.object({
     description: Joi.string().required().min(3)
 })
 
-const paramsValidator = Joi.object({
+const idParamValidator = Joi.object({
     id: Joi.number().required().integer().positive()   //imposto requisiti per l'id
 })
 
 const activityBodyValidator = validator.body(bodyValidator);  //creo il middleware di validazione per il body
-const activityParamsValidator = validator.params(paramsValidator);  //creo il middleware di validazione per l'id
+const activityIdParamsValidator = validator.params(idParamValidator);  //creo il middleware di validazione per l'id
 
-module.exports = { activityBodyValidator, activityParamsValidator };  //permetto di esportarlo in altri file ma dentro un array in modo da concatenarci altri validator.
+module.exports = { activityBodyValidator, activityIdParamsValidator };  //permetto di esportarlo in altri file ma dentro un oggetto in modo da inserirci altri validator e cercarli per nome
 
 /*
 const Joi = require('joi');
