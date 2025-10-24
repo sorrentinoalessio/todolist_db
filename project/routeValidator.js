@@ -16,7 +16,7 @@ const paramsValidator = Joi.object({
 const activityBodyValidator = validator.body(bodyValidator);  //creo il middleware di validazione per il body
 const activityParamsValidator = validator.params(paramsValidator);  //creo il middleware di validazione per l'id
 
-module.exports = [activityBodyValidator, activityParamsValidator];  //permetto di esportarlo in altri file ma dentro un array in modo da concatenarci altri validator.
+module.exports = { activityBodyValidator, activityParamsValidator };  //permetto di esportarlo in altri file ma dentro un array in modo da concatenarci altri validator.
 
 /*
 const Joi = require('joi');
@@ -27,25 +27,4 @@ module.exports = [
         description: Joi.string().required().min(3)
     }))
 ]
-*/
-
-
-/*
-app.use((err, req, res, next) => {
-    if (err?.error && err.error.isJoi) {
-        if (err.error.details.some(d => d.path.includes('body'))) {
-            return res.status(400).json({
-                type: err.type,
-                message: "Invalid body: " + err.error.toString()
-            });
-        }
-        if (err.error.details.some(d => d.path.includes('params'))) {
-            return res.status(400).json({
-                type: err.type,
-                message: "Invalid parameter: " + err.error.toString()
-            });
-        }
-    }
-    next(err);
-});
 */
