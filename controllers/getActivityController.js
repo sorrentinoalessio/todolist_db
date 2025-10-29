@@ -1,7 +1,7 @@
 import { getActivityById } from '../services/activityService.js';
 
 export const get = async (req, res) => {
-    const activityId = parseInt(req.params.id);
+    const activityId = req.params.id;
     const activity = await getActivityById(activityId);
     if(activity) {
         res.status(200).json(activity);
