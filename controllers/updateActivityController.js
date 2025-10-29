@@ -3,7 +3,7 @@ import { updateActivityById } from '../services/activityService.js';
 export const update = async (req, res) => {
     const activityId = parseInt(req.params.id);
     const activity = await updateActivityById(activityId, req.body);
-    if(activity.id === activityId) {
+    if(activity) {
         res.status(200).json(activity);
     } 
     else {
