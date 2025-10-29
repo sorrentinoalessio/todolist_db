@@ -18,11 +18,7 @@ export const updateActivityById = async (id, params) => {
     })
 }
 
-
-
-
-
-/*
+/* 
 export const removeActivityById = async(id) => {
     return await new Promise((resolve, reject) => {
         const readlineInterface = readline.createInterface({
@@ -45,6 +41,5 @@ export const removeActivityById = async(id) => {
             });
         })
     })
-
 }
-    */
+*/

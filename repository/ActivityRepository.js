@@ -1,4 +1,3 @@
-
 import activitySchema from "../schemas/activitySchema.js";
 
 class ActivityRepository {
@@ -24,6 +23,5 @@ class ActivityRepository {
         return res.toObject();
     }
 }
-
 
 export default new ActivityRepository();

@@ -1,8 +1,7 @@
 import express from 'express';
 
-const router = express.Router();  //Crea un "router" Express per gestire l'insieme di route senza lavorare nell'app principale
+const router = express.Router();
 
-//Importo i middleware di validazione del body/id dal file routeValidator.js | Uso destructuring per importare direttamente le due proprietà in modo compatto
 import { activityBodyValidator, activityIdParamValidator } from '../validators/routeValidator.js';
 
 import { add } from '../controllers/addActivityController.js';
