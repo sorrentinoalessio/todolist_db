@@ -11,7 +11,7 @@ const bodyValidator = Joi.object({
 })
 
 const idParamValidator = Joi.object({
-    id: Joi.string().required()
+    id: Joi.string().length(24).hex().required()
 })
 
 export const activityBodyValidator = validator.body(bodyValidator);
