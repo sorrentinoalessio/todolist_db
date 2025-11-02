@@ -21,3 +21,7 @@ connect().then(() => {
         console.log(`Server avviato ${host}: ${port}.`)
     })
 })
+
+//
+// POST JSON → Route → Validator Joi → Service → Repository → activitySchema (Mongoose) → MongoDB → Service → Route → JSON al client
+// CRUD: Create, Read, Update, Delete

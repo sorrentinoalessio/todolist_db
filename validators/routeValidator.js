@@ -3,11 +3,12 @@ import expressJoi from 'express-joi-validation';
 import mongoose from 'mongoose';
 
 const createValidator = expressJoi.createValidator;
-const validator = createValidator({ passError: true });
+const validator = createValidator({ passError: true });//
 
 const bodyValidator = Joi.object({
     name: Joi.string().required().min(3).max(256),
-    description: Joi.string().required().min(3)
+    description: Joi.string().required().min(3),
+    pippo: Joi.string().required().min(3).max(256)
 })
 
 const idParamValidator = Joi.object({
