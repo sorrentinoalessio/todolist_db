@@ -1,9 +1,9 @@
 import Joi from 'joi';
 import expressJoi from 'express-joi-validation';
-import { isObjectIdOrHexString } from 'mongoose';
+import mongoose from 'mongoose';
 
 const createValidator = expressJoi.createValidator;
-const validator = createValidator({ passError: true});
+const validator = createValidator({ passError: true });
 
 const bodyValidator = Joi.object({
     name: Joi.string().required().min(3).max(256),
@@ -11,8 +11,13 @@ const bodyValidator = Joi.object({
 })
 
 const idParamValidator = Joi.object({
-    id: Joi.string().length(24).hex().required()
-})
+    id: Joi.string().length(24).hex().required().custom((value, helpers) => {
+        if (!mongoose.Types.ObjectId.isValid(value)) {
+            return helpers.error('any.invalid');
+        }
+        return value;
+    })
+});
 
 export const activityBodyValidator = validator.body(bodyValidator);
 export const activityIdParamValidator = validator.params(idParamValidator);
